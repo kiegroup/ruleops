@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.drools.ruleops</groupId>
+    <artifactId>ruleops-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <name>RuleOps (parent)</name>
+    <description>Symbolic AI for Kubernetes DevOps, using Drools</description>
+    <url>https://www.drools.org</url>
+    <inceptionYear>2022</inceptionYear>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Luca Molteni</name>
+            <url>https://github.com/lucamolteni</url>
+        </developer>
+        <developer>
+            <name>Matteo Mortari</name>
+            <url>https://www.youtube.com/@MatteoMortari</url>
+        </developer>
+        <developer>
+            <name>Daniele Zonca</name>
+            <url>https://github.com/danielezonca</url>
+        </developer>
+        <!-- feel free to add your name here via pull request if you developed/contributed to RuleOps -->
+    </developers>
+    <contributors>
+        <contributor>
+            <name>All contributors are listed on the team website</name>
+            <url>http://www.drools.org/community/team.html</url>
+        </contributor>
+    </contributors>
+
+    <modules>
+        <module>ruleops</module>
+    </modules>
+
+</project>

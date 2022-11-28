@@ -1,0 +1,16 @@
+# modified from guide https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/
+apiVersion: v1
+kind: Pod
+metadata:
+  name: quota-mem-cpu-demo
+spec:
+  containers:
+    - name: quota-mem-cpu-demo-ctr
+      image: nginx
+      resources:
+        limits:
+          memory: "1Gi"
+          cpu: "1"
+        requests:
+          memory: "600Mi"
+          cpu: "500m"

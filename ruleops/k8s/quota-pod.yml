@@ -1,0 +1,8 @@
+# from Guide https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-pod-namespace/
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: pod-demo
+spec:
+  hard:
+    pods: "2"

@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    app.quarkus.io/commit-id: 8fa82c58a3d9889c75d86bd0317a4443440c2ca2
+    app.quarkus.io/build-timestamp: 2022-07-01 - 13:37:07 +0000
+  labels:
+    app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    app.kubernetes.io/name: hello-pvdf
+  name: hello-pvdf
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-pvdf
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  serviceName: hello-pvdf
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/version: 1.0.0-SNAPSHOT
+        app.kubernetes.io/name: hello-pvdf
+    spec:
+      containers:
+        - env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: PVDF_DIRECTORY
+              value: /mnt/data
+          image: quay.io/mmortari/hello-pvdf:1.0.0-SNAPSHOT
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/live
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: hello-pvdf
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/ready
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 500Mi
+          volumeMounts:
+            - mountPath: /mnt/data
+              name: my-pvc-claim
+              readOnly: false
+      terminationGracePeriodSeconds: 10
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        annotations:
+          app.quarkus.io/commit-id: 8fa82c58a3d9889c75d86bd0317a4443440c2ca2
+          app.quarkus.io/build-timestamp: 2022-07-01 - 13:37:07 +0000
+        labels:
+          app.kubernetes.io/version: 1.0.0-SNAPSHOT
+          app.kubernetes.io/name: hello-pvdf
+        name: my-pvc-claim
+        namespace: default
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Mi
+        storageClassName: standard
