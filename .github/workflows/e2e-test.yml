@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@v3.5.1
         with:
           node-version: 18
-          cache: 'npm'
+          # cache unsupported because we're not committed to a package-lock or similarly for the provisional PatternFly based UI.
 
       - name: Setup Minikube-Kubernetes
         uses: manusa/actions-setup-minikube@v2.7.1
