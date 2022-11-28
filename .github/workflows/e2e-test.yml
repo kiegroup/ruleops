@@ -1,0 +1,40 @@
+# Integration and End to End tests which runs locally using a Kubernetes (Minikube) cluster
+# to verify the RuleOps's functionality
+name: Integration & End to End tests
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+
+jobs:
+  ruleops_e2etest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: Set up Java and Maven
+        uses: actions/setup-java@v3.6.0
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: 'maven'
+
+      - name: Set up Node used to integrate RuleOps UI
+        uses: actions/setup-node@v3.5.1
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Setup Minikube-Kubernetes
+        uses: manusa/actions-setup-minikube@v2.7.1
+        with:
+          minikube version: v1.25.2
+          kubernetes version: v1.23.6
+          github token: ${{ secrets.GITHUB_TOKEN }}
+          driver: docker
+
+      - name: Build RuleOps and perform E2E test
+        run: mvn -B clean install --file pom.xmnl
