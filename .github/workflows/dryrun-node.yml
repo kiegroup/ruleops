@@ -1,4 +1,4 @@
-# dry-run the Node command for use in Quarkus' Quinoa to integrate the ruleops ui
+# dry-run the Node command for use in Quarkus' Quinoa to integrate the ruleops ui 
 name: Dry run Node
 
 on:
