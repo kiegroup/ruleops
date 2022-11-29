@@ -4,7 +4,7 @@ name: Integration & End to End tests
 
 on:
   push:
-    branches: [ '*' ]
+    branches: [ 'main' ]
     paths-ignore:
       - 'ruleops-ui/**'
   pull_request:

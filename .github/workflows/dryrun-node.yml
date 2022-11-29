@@ -3,7 +3,7 @@ name: Dry run Node
 
 on:
   push:
-    branches: [ '*' ]
+    branches: [ 'main' ]
     paths:
       - 'ruleops-ui/**'
   pull_request:
