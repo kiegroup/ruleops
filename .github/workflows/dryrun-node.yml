@@ -1,0 +1,28 @@
+# dry-run the Node command for use in Quarkus' Quinoa to integrate the ruleops ui 
+name: Dry run Node
+
+on:
+  push:
+    branches: [ 'main' ]
+    paths:
+      - 'ruleops-ui/**'
+  pull_request:
+    branches: [ '*' ]
+    paths:
+      - 'ruleops-ui/**'
+
+jobs:
+  dryrun_node:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: Set up Node used to integrate RuleOps UI
+        uses: actions/setup-node@v3.5.1
+        with:
+          node-version: 18
+          # cache unsupported because we're not committed to a package-lock or similarly for the provisional PatternFly based UI.
+
+      - name: Dry run Node
+        run: cd ruleops-ui && node install --force # same command as defined for Quinoa

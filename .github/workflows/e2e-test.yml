@@ -4,9 +4,13 @@ name: Integration & End to End tests
 
 on:
   push:
-    branches: [ '*' ]
+    branches: [ 'main' ]
+    paths-ignore:
+      - 'ruleops-ui/**'
   pull_request:
     branches: [ '*' ]
+    paths-ignore:
+      - 'ruleops-ui/**'
 
 jobs:
   ruleops_e2etest:
@@ -22,12 +26,6 @@ jobs:
           distribution: temurin
           cache: 'maven'
 
-      - name: Set up Node used to integrate RuleOps UI
-        uses: actions/setup-node@v3.5.1
-        with:
-          node-version: 18
-          # cache unsupported because we're not committed to a package-lock or similarly for the provisional PatternFly based UI.
-
       - name: Setup Minikube-Kubernetes
         uses: manusa/actions-setup-minikube@v2.7.1
         with:
@@ -37,4 +35,4 @@ jobs:
           driver: docker
 
       - name: Build RuleOps and perform E2E test
-        run: mvn -B clean install --file pom.xml
+        run: mvn -B clean install --file pom.xml -Dquarkus.quinoa=false
