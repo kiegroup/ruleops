@@ -3,6 +3,12 @@
 The project expects empty minikube/kind for integration tests purposes.
 Skip it with `mvn clean install -DskipITs` if needed.
 
+## Configuration defaults
+
+By default RuleOps observes the Kubernetes `default` namespace.
+This is reflected in the configuration of the Quarkus' `quarkus-kubernetes-client` extension, ([ref.](https://quarkus.io/guides/kubernetes-client#quarkus-kubernetes-client_quarkus.kubernetes-client.namespace)).
+You might override this setting to enable the use of RuleOps in other and different scenarios.
+
 ## Scenarios
 
 Deployment quota
