@@ -1,5 +1,3 @@
-import * as React from 'react';
-import { PageSection, Title } from '@patternfly/react-core';
 import {
   Button,
   ButtonVariant,
@@ -8,14 +6,7 @@ import {
   DataListCell,
   DataListItem,
   DataListItemCells,
-  DataListItemRow,
-  Toolbar,
-  ToolbarItem,
-  ToolbarContent,
-  ToolbarToggleGroup,
-  ToolbarGroup,
-  Divider,
-  Drawer,
+  DataListItemRow, Drawer,
   DrawerActions,
   DrawerCloseButton,
   DrawerContent,
@@ -24,25 +15,14 @@ import {
   DrawerPanelBody,
   DrawerPanelContent,
   Flex,
-  FlexItem,
-  InputGroup,
-  PageSectionVariants,
-  Progress,
-  Select,
-  SelectOption,
-  SelectVariant,
-  Stack,
-  StackItem,
-  Text,
-  TextContent,
-  TextInput
+  FlexItem, PageSection, Stack,
+  StackItem, Title, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem, ToolbarToggleGroup
 } from '@patternfly/react-core';
-import SyncAltIcon from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
 import CodeIcon from '@patternfly/react-icons/dist/esm/icons/code-icon';
-import CubeIcon from '@patternfly/react-icons/dist/esm/icons/cube-icon';
-import CheckCircleIcon from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import ExclamationTriangleIcon from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import SyncAltIcon from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
+import * as React from 'react';
 
 const Dashboard: React.FunctionComponent = () => (
   <PageSection padding={{default: "noPadding"}}>
@@ -99,21 +79,21 @@ const PrimaryDetailContentPadding : React.FunctionComponent = () => {
     setIsExpanded(false);
   };
 
-  const onSelectDataListItem = id => {
+  const onSelectDataListItem = (id: any) => {
     setSelectedDataListItemId(id);
     onClick();
   };
 
-  const handleInputChange = (id: string, _event: React.FormEvent<HTMLInputElement>) => {
-    setSelectedDataListItemId(id);
-  };
+  // const handleInputChange = (id: string, _event: React.FormEvent<HTMLInputElement>) => {
+  //   setSelectedDataListItemId(id);
+  // };
 
     const toggleGroupItems = (
       <React.Fragment>
         <ToolbarGroup variant="filter-group">
           <ToolbarItem>
-            <Button variant="primary" icon={<SyncAltIcon/>}>
-              Refresh
+            <Button variant="primary" icon={<SyncAltIcon/>}> {/* TODO setup onclick */}
+              Refresh 
             </Button>
           </ToolbarItem>
         </ToolbarGroup>
@@ -206,7 +186,7 @@ const PrimaryDetailContentPadding : React.FunctionComponent = () => {
 
     return (
       <>
-        <PageSection variant={PageSectionVariants.light}>
+        {/* <PageSection variant={PageSectionVariants.light}>
           <TextContent>
             <Text component="h1">Main Dashboard</Text>
             <Text component="p">
@@ -215,7 +195,7 @@ const PrimaryDetailContentPadding : React.FunctionComponent = () => {
             </Text>
           </TextContent>
         </PageSection>
-        <Divider component="div" />
+        <Divider component="div" /> */}
         <PageSection padding={{ default: 'noPadding' }}>
           <Drawer isExpanded={isExpanded} onExpand={onExpand}>
             <DrawerContent panelContent={panelContent} className={'pf-m-no-background'}>
