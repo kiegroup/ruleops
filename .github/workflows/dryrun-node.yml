@@ -25,4 +25,4 @@ jobs:
           # cache unsupported because we're not committed to a package-lock or similarly for the provisional PatternFly based UI.
 
       - name: Dry run Node
-        run: cd ruleops-ui && node install --force # same command as defined for Quinoa
+        run: cd ruleops-ui && npm install --force # same command as defined for Quinoa
