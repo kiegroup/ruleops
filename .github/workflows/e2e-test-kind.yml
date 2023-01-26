@@ -1,6 +1,6 @@
-# Integration and End to End tests which runs locally using a Kubernetes (Minikube) cluster
+# Integration and End to End tests which runs locally using a Kubernetes (KinD) cluster
 # to verify the RuleOps's functionality
-name: Integration & End to End tests
+name: Integration & End to End tests using KinD
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
       - 'ruleops-ui/**'
 
 jobs:
-  ruleops_e2etest:
+  ruleops_e2etest_kind:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,13 +26,8 @@ jobs:
           distribution: temurin
           cache: 'maven'
 
-      - name: Setup Minikube-Kubernetes
-        uses: manusa/actions-setup-minikube@v2.7.1
-        with:
-          minikube version: v1.25.2
-          kubernetes version: v1.23.6
-          github token: ${{ secrets.GITHUB_TOKEN }}
-          driver: docker
+      - name: Kubernetes KinD Cluster
+        uses: container-tools/kind-action@v2
 
       - name: Build RuleOps and perform E2E test
         run: mvn -B clean install --file pom.xml -Dquarkus.quinoa=false
