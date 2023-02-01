@@ -49,7 +49,7 @@ end
 
 function boolean mapContains(Map left, Map right) {
   if (left == null) {
-    return true;
+    return right == null;
   }
   if (right == null) {
     return false;
