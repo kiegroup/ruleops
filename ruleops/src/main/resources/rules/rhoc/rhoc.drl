@@ -7,6 +7,7 @@ import org.drools.ruleops.DroolsUtils;
 import org.drools.ruleops.DroolsK8sClient;
 import org.drools.ruleops.model.Advice;
 
+import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.ContainerPort;
 import io.fabric8.kubernetes.api.model.Event;
@@ -23,9 +24,14 @@ import io.fabric8.kubernetes.api.model.Quantity;
 
 global java.lang.String arg0;
 
-rule "Hello world for RHOC"
+rule "Find configMap in connector namespace to enable logs"
 when
-  $pod : Pod( $name : metadata.name )
+  $pod : Pod( $name: metadata.name,
+               metadata.labels["cos.bf2.org/connector.id"] == arg0,
+               $deploymentId : metadata.labels["cos.bf2.org/deployment.id"],
+                $namespace: metadata.namespace)
+   $configMap: ConfigMap( metadata.name ==  "mctr-" + $deploymentId + "-configmap",  metadata.namespace == $namespace)
+
 then
-  System.out.println("Found pod with name: " + $name + " global value: " + arg0);
+  System.out.println("Found configmap " + $configMap.getMetadata().getName()  + " in namespace: " + $namespace + " connectorId " + arg0);
 end

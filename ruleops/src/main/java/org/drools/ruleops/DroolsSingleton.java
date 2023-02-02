@@ -11,6 +11,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Service;
@@ -103,8 +104,9 @@ public class DroolsSingleton {
         Multi<KubernetesResource> pods = mutinyFabric8KubernetesClient(Pod.class, c -> c.pods().inAnyNamespace().list().getItems());
         Multi<KubernetesResource> persistentVolumeClaims = mutinyFabric8KubernetesClient(PersistentVolumeClaim.class, c -> c.persistentVolumeClaims().list().getItems());
         Multi<KubernetesResource> services = mutinyFabric8KubernetesClient(Service.class, c -> c.services().list().getItems());
+        Multi<KubernetesResource> configMaps = mutinyFabric8KubernetesClient(ConfigMap.class, c -> c.configMaps().inAnyNamespace().list().getItems());
 
-        return Multi.createBy().merging().streams(deployments, statefulSets, pods, persistentVolumeClaims, services)
+        return Multi.createBy().merging().streams(deployments, statefulSets, pods, persistentVolumeClaims, services, configMaps)
                 .collect()
                 .asList()
                 .await()
