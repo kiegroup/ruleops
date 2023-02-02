@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.drools.ruleops.model.Advice;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.kie.api.command.Command;
 import org.kie.api.event.rule.DefaultRuleRuntimeEventListener;
 import org.kie.api.event.rule.ObjectDeletedEvent;
@@ -44,10 +45,13 @@ public class DroolsSingleton {
 
     private StatelessKieSession ksession;
 
+    @ConfigProperty(name = "ruleops.kiebase")
+    String kieBase;
+
     @PostConstruct
     void onConstructed() {
-        LOG.info("@Singleton construction initiated...");
-        ksession = runtimeBuilder.getKieBase().newStatelessKieSession();
+        LOG.info("@Singleton construction initiated with kieBase {}...", kieBase);
+        ksession = runtimeBuilder.getKieBase(kieBase).newStatelessKieSession();
         ksession.addEventListener(new DefaultRuleRuntimeEventListener() {
 
             @Override
