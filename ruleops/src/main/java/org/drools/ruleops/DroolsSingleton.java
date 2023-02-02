@@ -11,6 +11,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import org.drools.ruleops.model.Advice;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.kie.api.command.Command;
@@ -68,63 +73,64 @@ public class DroolsSingleton {
             public void objectUpdated(ObjectUpdatedEvent event) {
                 LOG.trace("><> UPDATED: {}", event.getObject());
             }
-            
+
         });
     }
 
-    void onStart(@Observes StartupEvent ev) {               
+    void onStart(@Observes StartupEvent ev) {
         LOG.info("The application is starting...");
-        for ( var d : client.apps().statefulSets().list().getItems() ) {
+        for (var d : client.apps().statefulSets().list().getItems()) {
             if (LOG.isDebugEnabled()) {
                 Utils.debugYaml(d);
             }
         }
-        evaluateAllRulesStateless();
     }
 
-    private Multi<KubernetesResource> mutinyFabric8KubernetesClient(Function<KubernetesClient, List<? extends KubernetesResource>> blockingFn) {
+    private Multi<KubernetesResource> mutinyFabric8KubernetesClient(Class<? extends KubernetesResource> resourceType, Function<KubernetesClient,
+            List<? extends KubernetesResource>> blockingFn) {
+
         return Multi.createFrom().<KubernetesResource>items(() -> {
-                LOG.debug("using fabric8");
-                var res = blockingFn.apply(client);
-                LOG.debug("resulted fabric8 ({} results)", res.size());
-                return res.stream();})
-            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+                    var res = blockingFn.apply(client);
+                    LOG.debug("Fetched {} {}s", res.size(), resourceType.getName());
+                    return res.stream();
+                })
+                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
     }
 
     public Collection<KubernetesResource> levelTrigger() {
-        Multi<KubernetesResource> deployments = mutinyFabric8KubernetesClient(c -> c.apps().deployments().list().getItems());
-        Multi<KubernetesResource> statefulSets = mutinyFabric8KubernetesClient(c -> c.apps().statefulSets().list().getItems());
-        Multi<KubernetesResource> pods = mutinyFabric8KubernetesClient(c -> c.pods().inAnyNamespace().list().getItems());
-        Multi<KubernetesResource> persistentVolumeClaims = mutinyFabric8KubernetesClient(c -> c.persistentVolumeClaims().list().getItems());
-        Multi<KubernetesResource> services = mutinyFabric8KubernetesClient(c -> c.services().list().getItems());
-        List<KubernetesResource> mylist = Multi.createBy().merging().streams(deployments, statefulSets, pods, persistentVolumeClaims, services).collect().asList().await().atMost(Duration.ofSeconds(10));
+        Multi<KubernetesResource> deployments = mutinyFabric8KubernetesClient(Deployment.class, c -> c.apps().deployments().list().getItems());
+        Multi<KubernetesResource> statefulSets = mutinyFabric8KubernetesClient(StatefulSet.class, c -> c.apps().statefulSets().list().getItems());
+        Multi<KubernetesResource> pods = mutinyFabric8KubernetesClient(Pod.class, c -> c.pods().inAnyNamespace().list().getItems());
+        Multi<KubernetesResource> persistentVolumeClaims = mutinyFabric8KubernetesClient(PersistentVolumeClaim.class, c -> c.persistentVolumeClaims().list().getItems());
+        Multi<KubernetesResource> services = mutinyFabric8KubernetesClient(Service.class, c -> c.services().list().getItems());
 
-        // var mylist = Uni.combine().all().unis(
-        //     Uni.createFrom().item(() -> { LOG.info("deployments"); var x = client.apps().deployments().list().getItems(); LOG.info("deployments"); return x;}).runSubscriptionOn(Infrastructure.getDefaultWorkerPool()),  
-        //     Uni.createFrom().item(() -> { LOG.info("statefulSets"); var x = client.apps().statefulSets().list().getItems(); LOG.info("statefulSets"); return x;}).runSubscriptionOn(Infrastructure.getDefaultWorkerPool()),
-        //     Uni.createFrom().item(() -> { LOG.info("pods"); var x = client.pods().list().getItems(); LOG.info("pods"); return x;}).runSubscriptionOn(Infrastructure.getDefaultWorkerPool()),
-        //     Uni.createFrom().item(() -> { LOG.info("persistentVolumeClaims"); var x = client.persistentVolumeClaims().list().getItems(); LOG.info("persistentVolumeClaims"); return x;}).runSubscriptionOn(Infrastructure.getDefaultWorkerPool()),
-        //     Uni.createFrom().item(() -> { LOG.info("services"); var x = client.services().list().getItems(); LOG.info("services"); return x;}).runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-        // ).usingConcurrencyOf(8).combinedWith(List.class, te -> (List<?>) te.stream().flatMap(List::stream).collect(Collectors.toList())).await().atMost(Duration.ofSeconds(10));
-        // LOG.debug("{}", mylist);
-
-        return mylist;
+        return Multi.createBy().merging().streams(deployments, statefulSets, pods, persistentVolumeClaims, services)
+                .collect()
+                .asList()
+                .await()
+                .atMost(Duration.ofSeconds(10));
     }
 
-    public List<Advice> evaluateAllRulesStateless() {
+    public List<Advice> evaluateAllRulesStateless(String... args) {
         List<Command<?>> cmds = new ArrayList<>();
+
+        if (args.length > 0) {
+            cmds.add(CommandFactory.newSetGlobal("arg0", args[0]));
+        }
+
         cmds.add(CommandFactory.newInsertElements(levelTrigger()));
         cmds.add(CommandFactory.newFireAllRules());
+
         final String ADVICES = "advices";
         cmds.add(CommandFactory.newGetObjects(Advice.class::isInstance, ADVICES));
         ExecutionResults results = ksession.execute(CommandFactory.newBatchExecution(cmds));
-        LOG.debug("{}", results);
+        LOG.debug("Results id: {}", results.getIdentifiers());
         @SuppressWarnings("unchecked")
         List<Advice> value = (List<Advice>) results.getValue(ADVICES);
         return value;
     }
 
-    void onStop(@Observes ShutdownEvent ev) {               
+    void onStop(@Observes ShutdownEvent ev) {
         LOG.info("The application is stopping...");
         //evaluateAllRulesStateless();
     }

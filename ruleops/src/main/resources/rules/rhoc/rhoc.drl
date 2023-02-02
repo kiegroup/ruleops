@@ -21,9 +21,11 @@ import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentCondition;
 import io.fabric8.kubernetes.api.model.Quantity;
 
+global java.lang.String arg0;
+
 rule "Hello world for RHOC"
 when
-  Object()
+  $pod : Pod( $name : metadata.name )
 then
-  System.out.println("Hello world from RHOC +++");
+  System.out.println("Found pod with name: " + $name + " global value: " + arg0);
 end
