@@ -33,5 +33,20 @@ when
    $configMap: ConfigMap( metadata.name ==  "mctr-" + $deploymentId + "-configmap",  metadata.namespace == $namespace)
 
 then
-  System.out.println("Found configmap " + $configMap.getMetadata().getName()  + " in namespace: " + $namespace + " connectorId " + arg0);
+  System.out.println("Found configmap "
+        + $configMap.getMetadata().getName()
+        + " in namespace: " + $namespace
+        + " connectorId " + arg0
+        );
+  if(!$configMap.getData().containsKey("override.properties")) {
+      insert(new Advice("Enable logging on connector: " + arg0,
+                "Run the following command:\n " +
+                "\tkubectl edit configmap " + $configMap.getMetadata().getName() + " -n " + $namespace + "\n" +
+                "To add inside the data:\n" +
+                "override.properties: |-\n" +
+                     "quarkus.log.level=DEBUG\n" +
+                     "quarkus.log.min-level=DEBUG\n" +
+                     "quarkus.log.category.\"org.apache\".level = DEBUG\n" +
+                     "quarkus.log.category.\"org.apache\".min-level = DEBUG"));
+  }
 end
