@@ -56,17 +56,17 @@ public class DroolsSingleton {
 
             @Override
             public void objectDeleted(ObjectDeletedEvent event) {
-                LOG.info("<<< DELETED: {}", event.getOldObject());
+                LOG.trace("<<< DELETED: {}", event.getOldObject());
             }
 
             @Override
             public void objectInserted(ObjectInsertedEvent event) {
-                LOG.info(">>> INSERTED: {}", event.getObject());
+                LOG.trace(">>> INSERTED: {}", event.getObject());
             }
 
             @Override
             public void objectUpdated(ObjectUpdatedEvent event) {
-                LOG.info("><> UPDATED: {}", event.getObject());
+                LOG.trace("><> UPDATED: {}", event.getObject());
             }
             
         });
@@ -94,7 +94,7 @@ public class DroolsSingleton {
     public Collection<KubernetesResource> levelTrigger() {
         Multi<KubernetesResource> deployments = mutinyFabric8KubernetesClient(c -> c.apps().deployments().list().getItems());
         Multi<KubernetesResource> statefulSets = mutinyFabric8KubernetesClient(c -> c.apps().statefulSets().list().getItems());
-        Multi<KubernetesResource> pods = mutinyFabric8KubernetesClient(c -> c.pods().list().getItems());
+        Multi<KubernetesResource> pods = mutinyFabric8KubernetesClient(c -> c.pods().inAnyNamespace().list().getItems());
         Multi<KubernetesResource> persistentVolumeClaims = mutinyFabric8KubernetesClient(c -> c.persistentVolumeClaims().list().getItems());
         Multi<KubernetesResource> services = mutinyFabric8KubernetesClient(c -> c.services().list().getItems());
         List<KubernetesResource> mylist = Multi.createBy().merging().streams(deployments, statefulSets, pods, persistentVolumeClaims, services).collect().asList().await().atMost(Duration.ofSeconds(10));
