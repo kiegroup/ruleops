@@ -1,0 +1,29 @@
+package rules.rhoc;
+
+import java.util.Map;
+
+import org.drools.ruleops.Utils;
+import org.drools.ruleops.DroolsUtils;
+import org.drools.ruleops.DroolsK8sClient;
+import org.drools.ruleops.model.Advice;
+
+import io.fabric8.kubernetes.api.model.Container;
+import io.fabric8.kubernetes.api.model.ContainerPort;
+import io.fabric8.kubernetes.api.model.Event;
+import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.ServicePort;
+import io.fabric8.kubernetes.api.model.Volume;
+import io.fabric8.kubernetes.api.model.apps.StatefulSet;
+import io.fabric8.kubernetes.api.model.apps.StatefulSetCondition;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.apps.DeploymentCondition;
+import io.fabric8.kubernetes.api.model.Quantity;
+
+rule "Hello world for RHOC"
+when
+  Object()
+then
+  System.out.println("Hello world from RHOC +++");
+end
