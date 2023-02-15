@@ -23,9 +23,7 @@ import io.fabric8.kubernetes.api.model.Quantity;
 
 rule "Relax the ResourceQuota limits Deployment PENDING"
 when
-  $d : Deployment()
-  DeploymentCondition(type == "Available", status == "False") from $d.status.conditions
-  DeploymentCondition(message contains "exceeded quota") from $d.status.conditions
+  $d : Deployment( /status/conditions[type == "Available", status == "False"] && /status/conditions[message contains "exceeded quota"] )
 then
   insert(new Advice("Relax the ResourceQuota limits","Deployment PENDING: "+$d.getMetadata().getName()));
 end
@@ -41,8 +39,7 @@ end
 rule "Fix the PersistentVolume Claim Pod PENDING"
 when
   $pvc : PersistentVolumeClaim( status.phase == "Pending" )
-  $pod : Pod( status.phase == "Pending" )
-  Volume( persistentVolumeClaim!.claimName == $pvc.metadata.name ) from $pod.spec.volumes
+  $pod : Pod( status.phase == "Pending", /spec/volumes[persistentVolumeClaim != null, persistentVolumeClaim.claimName == $pvc.metadata.name] )
 then
   insert(new Advice("Fix the PersistentVolume","Pod PENDING: "+$pod.getMetadata().getName() + " pvc PENDING: "+$pvc.getMetadata().getName()));
 end
@@ -83,18 +80,16 @@ end
 
 rule "Fix the Service targetPort and the containerPort"
 when
-  $svc : Service( metadata.name != "kubernetes" )
-  $sPort : ServicePort() from $svc.spec.ports
+  $svc : Service( metadata.name != "kubernetes", /spec/ports[ $svcTargetPort: targetPort ] )
   $pod : Pod( mapContains(metadata.labels, $svc.spec.selector) )
   not (
-    $c : Container() from $pod.spec.containers and
-    ContainerPort(containerPort == $sPort.targetPort.intVal) from $c.ports
+    $c : Container( /ports[containerPort == $svcTargetPort.intVal] ) from $pod.spec.containers
   )
 then
   insert(new Advice("Fix the Service targetPort and the containerPort","Service " + 
       $svc.getMetadata().getName() +
       " targetPort: " +
-      $sPort.getTargetPort() +
+      $svcTargetPort +
       " not found in any Container of related Pod: " +
       $pod.getMetadata().getName()
   ));
