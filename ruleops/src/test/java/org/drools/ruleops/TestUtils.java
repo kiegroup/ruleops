@@ -1,8 +1,12 @@
 package org.drools.ruleops;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,5 +30,22 @@ public class TestUtils {
         HasMetadata r1 = client.load(k8sFile(filename)).fromServer().get().get(0);
         LOG.debug("fromServer() {}", r1);
         return r1;
+    }
+
+    public static void cleanupWaitForEmptyK8s(KubernetesClient client) throws Exception {
+        LOG.debug("checking for empty k8s cluster on test cleanup.");
+        await()
+        .pollDelay(2, TimeUnit.SECONDS)
+        .atMost(30, TimeUnit.SECONDS)
+        .pollInterval(2, TimeUnit.SECONDS)
+        .ignoreExceptions()
+        .untilAsserted(() -> {
+            assertThat(client.resourceQuotas().list().getItems() ).as("Expecting empty resourceQuotas on cleanup").isEmpty();
+            assertThat(client.pods().list().getItems()).as("Expecting empty pods on cleanup").isEmpty();
+            assertThat(client.apps().deployments().list().getItems()).as("Expecting empty deployments on cleanup").isEmpty();
+            assertThat(client.apps().statefulSets().list().getItems()).as("Expecting empty statefulSets on cleanup").isEmpty();
+            assertThat(client.persistentVolumes().list().getItems()).as("Expecting empty persistentVolumes on cleanup").isEmpty();
+            assertThat(client.persistentVolumeClaims().list().getItems()).as("Expecting empty persistentVolumeClaims on cleanup").isEmpty();
+        });
     }
 }

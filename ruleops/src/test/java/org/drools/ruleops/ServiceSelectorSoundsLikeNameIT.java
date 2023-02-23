@@ -2,6 +2,7 @@ package org.drools.ruleops;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.drools.ruleops.TestUtils.cleanupWaitForEmptyK8s;
 import static org.drools.ruleops.TestUtils.fromServer;
 import static org.drools.ruleops.TestUtils.k8sFile;
 
@@ -64,6 +65,7 @@ public class ServiceSelectorSoundsLikeNameIT {
     public void cleanup() throws Exception {
         client.load(k8sFile(HELLO_PVDF_SERVICE_YML)).delete();
         client.load(k8sFile(HELLO_PVDF_SIMILARNAMEPOD_YML)).delete();
+        cleanupWaitForEmptyK8s(client);
     }
 
 }
