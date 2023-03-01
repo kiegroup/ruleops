@@ -20,9 +20,9 @@ public class PatternDescrSerializer extends StdSerializer<PatternDescr> {
         if (o.getAllBoundIdentifiers().isEmpty()) {
             // do nothing, as expected.
         } else if (o.getAllBoundIdentifiers().size() == 1) {
-            jsonGenerator.writeStringField("bound", o.getAllBoundIdentifiers().get(0));
+            jsonGenerator.writeStringField("as", o.getAllBoundIdentifiers().get(0));
         } else {
-            jsonGenerator.writeStringField("bound", o.getAllBoundIdentifiers().get(0)); // TODO check with Mario the index=0 is always the pattern one
+            jsonGenerator.writeStringField("as", o.getAllBoundIdentifiers().get(0)); // TODO check with Mario the index=0 is always the pattern one
         }
         if (!o.getConstraint().getDescrs().isEmpty()) {
             jsonGenerator.writeArrayFieldStart("having");

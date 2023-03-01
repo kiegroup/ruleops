@@ -24,7 +24,7 @@ rules:
 - name: Relax the ResourceQuota limits Deployment PENDING
   when:
   - given: Deployment
-    bound: $d
+    as: $d
   - given: DeploymentCondition
     having:
     - type == "Available"
@@ -39,7 +39,7 @@ rules:
 - name: Relax the ResourceQuota limits StatefulSet PENDING
   when:
   - given: StatefulSet
-    bound: $s
+    as: $s
     having:
     - spec.replicas != status.replicas
   - given: Event
@@ -51,11 +51,11 @@ rules:
 - name: Fix the PersistentVolume Claim Pod PENDING
   when:
   - given: PersistentVolumeClaim
-    bound: $pvc
+    as: $pvc
     having:
     - status.phase == "Pending"
   - given: Pod
-    bound: $pod
+    as: $pod
     having:
     - status.phase == "Pending"
   - given: Volume
@@ -67,7 +67,7 @@ rules:
 - name: Fix the Service selector No Pod found for selector
   when:
   - given: Service
-    bound: $svc
+    as: $svc
     having:
     - metadata.name != "kubernetes"
   - not:
@@ -79,12 +79,12 @@ rules:
 - name: "Fix the Service selector matches Pod name, but other selectors don't"
   when:
   - given: Service
-    bound: $svc
+    as: $svc
     having:
     - metadata.name != "kubernetes"
     - "$selectorName: spec!.selector[\"app.kubernetes.io/name\"]"
   - given: Pod
-    bound: $pod
+    as: $pod
     having:
     - "metadata.labels[\"app.kubernetes.io/name\"] == $selectorName"
     - "!mapContains(metadata.labels, $svc.spec.selector)"
@@ -93,12 +93,12 @@ rules:
 - name: Fix the Service selector sounds like Pod name but not an exact match
   when:
   - given: Service
-    bound: $svc
+    as: $svc
     having:
     - metadata.name != "kubernetes"
     - "$selectorName: spec!.selector[\"app.kubernetes.io/name\"]"
   - given: Pod
-    bound: $pod
+    as: $pod
     having:
     - "metadata.labels[\"app.kubernetes.io/name\"] != $selectorName"
     - "metadata.labels[\"app.kubernetes.io/name\"] soundslike $selectorName"
@@ -107,20 +107,20 @@ rules:
 - name: Fix the Service targetPort and the containerPort
   when:
   - given: Service
-    bound: $svc
+    as: $svc
     having:
     - metadata.name != "kubernetes"
   - given: ServicePort
-    bound: $sPort
+    as: $sPort
     from: $svc.spec.ports
   - given: Pod
-    bound: $pod
+    as: $pod
     having:
     - "mapContains(metadata.labels, $svc.spec.selector)"
   - not:
     - all:
       - given: Container
-        bound: $c
+        as: $c
         from: $pod.spec.containers
       - given: ContainerPort
         having:
