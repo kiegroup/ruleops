@@ -7,6 +7,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.stream.Collectors;
 
 import org.drools.drl.ast.descr.AndDescr;
+import org.drools.drl.ast.descr.ExistsDescr;
 import org.drools.drl.ast.descr.ExpressionDescr;
 import org.drools.drl.ast.descr.FromDescr;
 import org.drools.drl.ast.descr.FunctionDescr;
@@ -44,7 +45,8 @@ public class Generator {
             .addSerializer(new MVELExprDescrSerializer(MVELExprDescr.class))
             .addSerializer(new FunctionDescrSerializer(FunctionDescr.class))
             .addSerializer(new NotDescrSerializer(NotDescr.class))
-            .addSerializer(new AndDescrSerializer(AndDescr.class));
+            .addSerializer(new AndDescrSerializer(AndDescr.class))
+            .addSerializer(new ExistsDescrSerializer(ExistsDescr.class));
         mapper.registerModule(module);
     }
 

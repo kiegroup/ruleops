@@ -159,4 +159,23 @@ public class GeneratorTest {
         var output = Generator.convert(input);
         System.out.println(output);
     }
+
+    @Test
+    public void testSmoke10() throws Exception {
+        final var input = """
+            rule "Relax the ResourceQuota limits Deployment PENDING"
+            when
+              $d : Deployment()
+              exists(
+                DeploymentCondition(type == "Available", status == "False") from $d.status.conditions
+                and
+                DeploymentCondition(message contains "exceeded quota") from $d.status.conditions
+              )
+            then
+              insert(new Advice("Relax the ResourceQuota limits","Deployment PENDING: "+$d.getMetadata().getName()));
+            end
+            """;
+        var output = Generator.convert(input);
+        System.out.println(output);
+    }
 }
