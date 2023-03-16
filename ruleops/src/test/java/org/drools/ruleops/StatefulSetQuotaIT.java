@@ -2,6 +2,7 @@ package org.drools.ruleops;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.drools.ruleops.TestUtils.cleanupWaitForEmptyK8s;
 import static org.drools.ruleops.TestUtils.fromServer;
 import static org.drools.ruleops.TestUtils.k8sFile;
 
@@ -77,5 +78,6 @@ public class StatefulSetQuotaIT {
         client.load(k8sFile(QUOTA_POD_DEPLOYMENT_YML)).delete();
         // NOTE the PVC created by the volumeClaimTemplates is not deleted automatically on statefulset deletion from the cluster; ref https://github.com/kubernetes/kubernetes/issues/55045
         client.persistentVolumeClaims().withName("my-pvc-claim-hello-pvdf-0").delete();
+        cleanupWaitForEmptyK8s(client);
     }
 }
