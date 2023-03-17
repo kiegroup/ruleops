@@ -1,0 +1,14 @@
+- name: Listen for events on a webhook
+  hosts: all
+  sources:
+    - ansible.eda.webhook:
+        host: 0.0.0.0
+        port: 5050
+  rules:
+    - name: Provisioning the K8s resource
+      condition: event.payload.provision == "PersistentVolume"
+      action:
+        run_playbook:
+          name: provision-pv-playboook.yml
+          extra_vars:
+            capacity: '{{ event.payload.capacity }}'
