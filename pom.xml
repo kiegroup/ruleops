@@ -43,6 +43,7 @@
     </contributors>
 
     <modules>
+        <module>utils-drl2yaml</module>
         <module>ruleops</module>
     </modules>
 
