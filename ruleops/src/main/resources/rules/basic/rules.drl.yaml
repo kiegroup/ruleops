@@ -1,6 +1,6 @@
 # Automatically generated from: rules.drl
 ---
-package: rules
+package: rules.basic
 imports:
 - java.util.Map
 - org.drools.ruleops.Utils
@@ -25,15 +25,17 @@ rules:
   when:
   - given: Deployment
     as: $d
-  - given: DeploymentCondition
-    having:
-    - type == "Available"
-    - status == "False"
-    from: $d.status.conditions
-  - given: DeploymentCondition
-    having:
-    - message contains "exceeded quota"
-    from: $d.status.conditions
+  - exists:
+    - all:
+      - given: DeploymentCondition
+        having:
+        - type == "Available"
+        - status == "False"
+        from: $d.status.conditions
+      - given: DeploymentCondition
+        having:
+        - message contains "exceeded quota"
+        from: $d.status.conditions
   then: |
     insert(new Advice("Relax the ResourceQuota limits","Deployment PENDING: "+$d.getMetadata().getName()));
 - name: Relax the ResourceQuota limits StatefulSet PENDING
@@ -42,10 +44,11 @@ rules:
     as: $s
     having:
     - spec.replicas != status.replicas
-  - given: Event
-    having:
-    - message contains "exceeded quota"
-    from: DroolsK8sClient.eventsFor($s)
+  - exists:
+    - given: Event
+      having:
+      - message contains "exceeded quota"
+      from: DroolsK8sClient.eventsFor($s)
   then: |
     insert(new Advice("Relax the ResourceQuota limits","StatefulSet PENDING: "+$s.getMetadata().getName()));
 - name: Fix the PersistentVolume Claim Pod PENDING
