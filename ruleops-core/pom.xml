@@ -11,23 +11,6 @@
 
   <artifactId>ruleops-core</artifactId>
 
-  <properties>
-    <compiler-plugin.version>3.8.1</compiler-plugin.version>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-    <maven.compiler.release>17</maven.compiler.release>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>2.16.0.Final</quarkus.platform.version>
-    <!-- <skipITs>true</skipITs> we do NOT want to skipITs, as we are using IT for minikube/kind -->
-    <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
-    <version.drools>8.35.0.Final</version.drools>
-    <version.awaitility>4.2.0</version.awaitility>
-    <version.assertj>3.23.1</version.assertj>
-    <version.quarkus.quinoa>1.1.2</version.quarkus.quinoa>
-  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
