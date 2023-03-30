@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.drools.ruleops</groupId>
-    <artifactId>ruleops-parent</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+  <groupId>org.drools.ruleops</groupId>
+  <artifactId>ruleops-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0.0-SNAPSHOT</version>
 
-    <properties>
-        <compiler-plugin.version>3.8.1</compiler-plugin.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.release>17</maven.compiler.release>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>2.16.0.Final</quarkus.platform.version>
-        <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
-        <version.drools>8.35.0.Final</version.drools>
-        <version.awaitility>4.2.0</version.awaitility>
-        <version.assertj>3.23.1</version.assertj>
-        <version.quarkus.quinoa>1.1.2</version.quarkus.quinoa>
-    </properties>
+  <properties>
+    <compiler-plugin.version>3.8.1</compiler-plugin.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+    <quarkus.platform.version>2.16.0.Final</quarkus.platform.version>
+    <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
+    <version.drools>8.35.0.Final</version.drools>
+    <version.awaitility>4.2.0</version.awaitility>
+    <version.assertj>3.23.1</version.assertj>
+    <version.quarkus.quinoa>1.1.2</version.quarkus.quinoa>
+  </properties>
 
-    <name>RuleOps (parent)</name>
-    <description>Symbolic AI for Kubernetes DevOps, using Drools</description>
-    <url>https://www.drools.org</url>
-    <inceptionYear>2022</inceptionYear>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+  <name>RuleOps (parent)</name>
+  <description>Symbolic AI for Kubernetes DevOps, using Drools</description>
+  <url>https://www.drools.org</url>
+  <inceptionYear>2022</inceptionYear>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
-    <developers>
-        <developer>
-            <name>Luca Molteni</name>
-            <url>https://github.com/lucamolteni</url>
-        </developer>
-        <developer>
-            <name>Matteo Mortari</name>
-            <url>https://www.youtube.com/@MatteoMortari</url>
-        </developer>
-        <developer>
-            <name>Daniele Zonca</name>
-            <url>https://github.com/danielezonca</url>
-        </developer>
-        <!-- feel free to add your name here via pull request if you developed/contributed to RuleOps -->
-    </developers>
-    <contributors>
-        <contributor>
-            <name>All contributors are listed on the team website</name>
-            <url>http://www.drools.org/community/team.html</url>
-        </contributor>
-    </contributors>
+  <developers>
+    <developer>
+      <name>Luca Molteni</name>
+      <url>https://github.com/lucamolteni</url>
+    </developer>
+    <developer>
+      <name>Matteo Mortari</name>
+      <url>https://www.youtube.com/@MatteoMortari</url>
+    </developer>
+    <developer>
+      <name>Daniele Zonca</name>
+      <url>https://github.com/danielezonca</url>
+    </developer>
+    <!-- feel free to add your name here via pull request if you developed/contributed to RuleOps -->
+  </developers>
+  <contributors>
+    <contributor>
+      <name>All contributors are listed on the team website</name>
+      <url>http://www.drools.org/community/team.html</url>
+    </contributor>
+  </contributors>
 
-    <modules>
-        <module>utils-drl2yaml</module>
-        <module>ruleops-basic</module>
-        <module>rhoc</module>
-        <module>ruleops-core</module>
-    </modules>
+  <modules>
+    <module>utils-drl2yaml</module>
+    <module>ruleops-basic</module>
+    <module>rhoc</module>
+    <module>ruleops-core</module>
+  </modules>
 
   <dependencyManagement>
     <dependencies>
@@ -77,5 +77,30 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.drools</groupId>
+      <artifactId>drools-drl-quarkus</artifactId>
+      <version>${version.drools}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.drools</groupId>
+      <artifactId>drools-commands</artifactId>
+      <version>${version.drools}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>${version.awaitility}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${version.assertj}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>
