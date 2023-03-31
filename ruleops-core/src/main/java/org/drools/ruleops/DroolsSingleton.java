@@ -11,12 +11,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.fabric8.kubernetes.api.model.ConfigMap;
-import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
-import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.api.model.Service;
-import io.fabric8.kubernetes.api.model.apps.Deployment;
-import io.fabric8.kubernetes.api.model.apps.StatefulSet;
 import org.drools.ruleops.model.Advice;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.kie.api.command.Command;
@@ -32,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.fabric8.kubernetes.api.model.KubernetesResource;
+import io.fabric8.kubernetes.api.model.KubernetesResourceList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
@@ -87,24 +82,23 @@ public class DroolsSingleton {
         }
     }
 
-    private Multi<KubernetesResource> mutinyFabric8KubernetesClient(Class<? extends KubernetesResource> resourceType,
-                                                                    Function<KubernetesClient, List<? extends KubernetesResource>> blockingFn) {
-
+    private Multi<KubernetesResource> mutinyFabric8KubernetesClient(Function<KubernetesClient, KubernetesResourceList<? extends KubernetesResource>> blockingFn) {
         return Multi.createFrom().<KubernetesResource>items(() -> {
-                    var res = blockingFn.apply(client);
-                    LOG.debug("Fetched {} {}s", res.size(), resourceType.getName());
+                    var get = blockingFn.apply(client);
+                    var res = get.getItems();
+                    LOG.debug("Fetched {} items from {}", res.size(), get.getClass().getSimpleName());
                     return res.stream();
                 })
                 .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
     }
 
     public Collection<KubernetesResource> levelTrigger() {
-        Multi<KubernetesResource> deployments = mutinyFabric8KubernetesClient(Deployment.class, c -> c.apps().deployments().list().getItems());
-        Multi<KubernetesResource> statefulSets = mutinyFabric8KubernetesClient(StatefulSet.class, c -> c.apps().statefulSets().list().getItems());
-        Multi<KubernetesResource> pods = mutinyFabric8KubernetesClient(Pod.class, c -> c.pods().inAnyNamespace().list().getItems());
-        Multi<KubernetesResource> persistentVolumeClaims = mutinyFabric8KubernetesClient(PersistentVolumeClaim.class, c -> c.persistentVolumeClaims().list().getItems());
-        Multi<KubernetesResource> services = mutinyFabric8KubernetesClient(Service.class, c -> c.services().list().getItems());
-        Multi<KubernetesResource> configMaps = mutinyFabric8KubernetesClient(ConfigMap.class, c -> c.configMaps().inAnyNamespace().list().getItems());
+        Multi<KubernetesResource> deployments = mutinyFabric8KubernetesClient(c -> c.apps().deployments().list());
+        Multi<KubernetesResource> statefulSets = mutinyFabric8KubernetesClient(c -> c.apps().statefulSets().list());
+        Multi<KubernetesResource> pods = mutinyFabric8KubernetesClient(c -> c.pods().inAnyNamespace().list());
+        Multi<KubernetesResource> persistentVolumeClaims = mutinyFabric8KubernetesClient(c -> c.persistentVolumeClaims().list());
+        Multi<KubernetesResource> services = mutinyFabric8KubernetesClient(c -> c.services().list());
+        Multi<KubernetesResource> configMaps = mutinyFabric8KubernetesClient(c -> c.configMaps().inAnyNamespace().list());
 
         return Multi.createBy().merging().streams(deployments, statefulSets, pods, persistentVolumeClaims, services, configMaps)
                 .collect()
@@ -126,7 +120,7 @@ public class DroolsSingleton {
         final String ADVICES = "advices";
         cmds.add(CommandFactory.newGetObjects(Advice.class::isInstance, ADVICES));
         ExecutionResults results = ksession.execute(CommandFactory.newBatchExecution(cmds));
-        LOG.debug("Results id: {}", results.getIdentifiers());
+        LOG.debug("Results ids: {}", results.getIdentifiers());
         @SuppressWarnings("unchecked")
         List<Advice> value = (List<Advice>) results.getValue(ADVICES);
         return value;
