@@ -16,7 +16,8 @@ import {
   DrawerPanelContent,
   Flex,
   FlexItem, PageSection, Stack,
-  StackItem, Title, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem, ToolbarToggleGroup
+  StackItem, Title, Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem, ToolbarToggleGroup,
+  Skeleton
 } from '@patternfly/react-core';
 import CodeIcon from '@patternfly/react-icons/dist/esm/icons/code-icon';
 import ExclamationTriangleIcon from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
@@ -36,22 +37,13 @@ interface Advice {
   title: string,
   description: string,
 };
-
-const mockAdvices: Advice[] = [
-  {
-    title: "Advice 1",
-    description: "This is the description of advice 1."
-  },
-  {
-    title: "Advice 2",
-    description: "This is the description of advice 2."
-  },
-];
+const emptyAdvices: Advice[] = [];
 
 const PrimaryDetailContentPadding : React.FunctionComponent = () => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [selectedDataListItemId, setSelectedDataListItemId] = React.useState('');
-  const [advices, setAdvices] = React.useState(mockAdvices);
+  const [advices, setAdvices] = React.useState(emptyAdvices);
+  const [foundAdvices, setFoundAdvices] = React.useState(false);
   const drawerRef = React.useRef<HTMLDivElement>();
 
   React.useEffect(() => {
@@ -60,6 +52,7 @@ const PrimaryDetailContentPadding : React.FunctionComponent = () => {
       .then(
         (result) => {
           setAdvices(result);
+          setFoundAdvices(true);
         },
         (error) => {
           console.error(error);
@@ -129,17 +122,9 @@ const PrimaryDetailContentPadding : React.FunctionComponent = () => {
       </DrawerPanelContent>
     );
 
-    const drawerContent = (
-      <React.Fragment>
-        <Toolbar id="content-padding-data-toolbar" usePageInsets>
-          <ToolbarContent>{ToolbarItems}</ToolbarContent>
-        </Toolbar>
-        <DataList
-          aria-label="data list"
-          selectedDataListItemId={selectedDataListItemId}
-          onSelectDataListItem={onSelectDataListItem}
-        >
-            {advices.map(a => (
+    const advicesToDataListItem = (
+      <>
+      {advices.map(a => (
           <DataListItem id={"content-padding-item"+a.title}>
               <DataListItemRow>
               <DataListItemCells
@@ -177,9 +162,54 @@ const PrimaryDetailContentPadding : React.FunctionComponent = () => {
                 ]}
               />
             </DataListItemRow>
-            
           </DataListItem>
-            ))}
+      ))}
+      </>
+    );
+
+    const mockedCell = ([
+      <DataListCell key="primary content">
+        <Flex direction={{ default: 'column' }}>
+          <FlexItem>
+            <p><Skeleton width="33%" /></p><br />
+            <small>
+              <Skeleton width="45%" />
+              <Skeleton width="40%" style={{marginTop: "10px"}}/>
+            </small>
+          </FlexItem>
+        </Flex>
+      </DataListCell>
+    ]);
+    const mockedAdvisesDataListItems = (
+      <>
+        <DataListItem id="content-padding-item-1">
+          <DataListItemRow>
+            <DataListItemCells
+              dataListCells={mockedCell}
+            />
+          </DataListItemRow>
+        </DataListItem>
+        <DataListItem id="content-padding-item-2">
+          <DataListItemRow>
+            <DataListItemCells
+              dataListCells={mockedCell}
+            />
+          </DataListItemRow>
+        </DataListItem>
+      </>
+    );
+
+    const drawerContent = (
+      <React.Fragment>
+        <Toolbar id="content-padding-data-toolbar" usePageInsets>
+          <ToolbarContent>{ToolbarItems}</ToolbarContent>
+        </Toolbar>
+        <DataList
+          aria-label="data list"
+          selectedDataListItemId={selectedDataListItemId}
+          onSelectDataListItem={onSelectDataListItem}
+        >
+          {foundAdvices ? advicesToDataListItem : mockedAdvisesDataListItems}
         </DataList>
       </React.Fragment>
     );
