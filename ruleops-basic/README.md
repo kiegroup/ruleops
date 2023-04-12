@@ -54,6 +54,18 @@ alias ruleops="java -jar target/quarkus-app/quarkus-run.jar -Dquarkus.profile=cl
 ruleops
 ```
 
+### installing Event Driven Ansible collections etc. and invoking manually 
+
+```sh
+ansible-galaxy collection install ansible.eda
+ansible-galaxy collection install kubernetes.core
+pip3 install kubernetes
+ansible-rulebook --rulebook webhook-rulebook.yml -i inventory.yml --verbose
+curl -H 'Content-Type: application/json' -d "{\"provision\": \"PersistentVolume\", \"capacity\":\"3Gi\"}" http://127.0.0.1:5050/endpoint
+```
+
+
+
 <!--
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.

@@ -1,0 +1,23 @@
+- hosts: all
+  tasks:
+    - debug:
+        var: capacity
+    - name: create PV resource of the needed capacity 
+      kubernetes.core.k8s:
+        state: present
+        generate_name: edansible-pv-
+        definition:
+          apiVersion: v1
+          kind: PersistentVolume
+          metadata:
+            # see generate_name ... name: task-pv-volume
+            labels:
+              type: local
+          spec:
+            storageClassName: manual
+            capacity:
+              storage: '{{ capacity }}'
+            accessModes:
+              - ReadWriteOnce
+            hostPath:
+              path: "/tmp/minikubedata" # demo purposes

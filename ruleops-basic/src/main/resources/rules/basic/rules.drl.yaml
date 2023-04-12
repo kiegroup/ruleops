@@ -6,6 +6,7 @@ imports:
 - org.drools.ruleops.Utils
 - org.drools.ruleops.DroolsUtils
 - org.drools.ruleops.DroolsK8sClient
+- org.drools.ruleops.EDAnsibleClient
 - org.drools.ruleops.model.Advice
 - io.fabric8.kubernetes.api.model.Container
 - io.fabric8.kubernetes.api.model.ContainerPort
@@ -67,6 +68,7 @@ rules:
     from: $pod.spec.volumes
   then: |
     insert(new Advice("Fix the PersistentVolume","Pod PENDING: "+$pod.getMetadata().getName() + " pvc PENDING: "+$pvc.getMetadata().getName()));
+      EDAnsibleClient.with("provision", "PersistentVolume").with("capacity", $pvc.getSpec().getResources().getRequests().get("storage")).sendEvent();
 - name: Fix the Service selector No Pod found for selector
   when:
   - given: Service

@@ -5,6 +5,7 @@ import java.util.Map;
 import org.drools.ruleops.Utils;
 import org.drools.ruleops.DroolsUtils;
 import org.drools.ruleops.DroolsK8sClient;
+import org.drools.ruleops.EDAnsibleClient;
 import org.drools.ruleops.model.Advice;
 
 import io.fabric8.kubernetes.api.model.Container;
@@ -50,6 +51,7 @@ when
   Volume( persistentVolumeClaim!.claimName == $pvc.metadata.name ) from $pod.spec.volumes
 then
   insert(new Advice("Fix the PersistentVolume","Pod PENDING: "+$pod.getMetadata().getName() + " pvc PENDING: "+$pvc.getMetadata().getName()));
+  EDAnsibleClient.with("provision", "PersistentVolume").with("capacity", $pvc.getSpec().getResources().getRequests().get("storage")).sendEvent();
 end
 
 function boolean mapContains(Map left, Map right) {
