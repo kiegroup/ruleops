@@ -472,6 +472,22 @@ In order to detect mismatch between the definition in a service and its related 
 
 It is to be noted how making use of existential operators in semantic rules make it very easy to express declaratively these types of checks, with a relatively lower effort if compared to coding the same manually by hand using an imperative-style programming language.
 
+# Deployment model
+
+As part of this exploration, we are not fixating on a specific type of deployment model, and in fact we are exploring several options in this space, considering the different use-cases.
+
+In the case of RuleOps being consumed as a command line application, the deployment model consist of a locally running application, which can be running only for the context of invocation, or as a locally running daemon.
+Analogously, RuleOps may be deployed as a locally running application, as a background daemon and/or GUI-based application in user space.
+This type of deployment could best exploit a _level trigger_ mechanism for interaction with Kubernetes API and other data sources.
+
+An important consideration we are refining in the context of _level trigger_ based communications, is the ability to be as much specific as possible during API calls and the type of data needed; for instance, limiting to a specific Kubernetes `namespace`, or requesting only for resources having specific `labels` (or `annotations`, or other metadata of sorts).
+
+Another type of deployment model consists in having RuleOps running as part of the Kubernetes control plane. This would allow the rule engine to exploit first and foremost an _edge trigger_ based interaction model with the Kubernetes API, possibly to be completed with level-trigger only if needed.
+
+We are also exploring other type of deployment models, to best serve the DevOps persona and/or smooth DX and integration with existing frameworks and tools.
+
+FEEDBACK? QUESTIONS? 👉👉 leave a comment using the GitHub Discussion tab, and reach out to us via email/socials! We'd love to hear your feedback 🙏
+
 # Resources
 <!-- our resources -->
 - video1 https://www.youtube.com/watch?v=ZJ4tUnaGlaY
