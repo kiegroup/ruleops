@@ -35,10 +35,6 @@ public class DroolsSingleton {
         return ksession;
     }
 
-    /***
-     * Tests are still calling this. Use RuleOps.evaluateAllRulesStateless instead
-     */
-    @Deprecated()
     public List<Advice> evaluateAllRulesStateless(String... args) {
         StatelessKieSession kieSession = createKieSession();
         return new RuleOps(levelTrigger, kieSession).evaluateAllRulesStateless(args);
