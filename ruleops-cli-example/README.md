@@ -1,13 +1,19 @@
+## Jar
+
 Compile the Example CLI Jar with 
 
 ```shell
 mvn install
 ```
 
+Then run it, it will show an help
 
 ```shell
-java -jar target/quarkus-app/quarkus-run.jar <$POD_NAME>
+java -jar target/quarkus-app/quarkus-run.jar
 ```
+
+
+## Native 
 
 otherwise compile the native executable with
 
