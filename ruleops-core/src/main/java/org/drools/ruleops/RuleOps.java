@@ -3,10 +3,6 @@ package org.drools.ruleops;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Alternative;
-import javax.inject.Inject;
-
 import org.drools.ruleops.model.Advice;
 import org.kie.api.command.Command;
 import org.kie.api.runtime.ExecutionResults;
@@ -15,16 +11,11 @@ import org.kie.internal.command.CommandFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@RequestScoped
-@Alternative
 public class RuleOps {
 
     private static final Logger LOG = LoggerFactory.getLogger(RuleOps.class);
 
-    @Inject
-    LevelTrigger levelTrigger;
-
-    @Inject
+    private LevelTrigger levelTrigger;
     private StatelessKieSession ksession;
 
     public RuleOps(LevelTrigger levelTrigger, StatelessKieSession kieSession) {

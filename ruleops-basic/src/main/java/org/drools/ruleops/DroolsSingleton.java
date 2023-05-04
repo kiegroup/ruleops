@@ -3,10 +3,8 @@ package org.drools.ruleops;
 import java.util.List;
 
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.Produces;
 
 import io.quarkus.runtime.ShutdownEvent;
 import org.drools.ruleops.model.Advice;
@@ -17,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-@Alternative
 public class DroolsSingleton {
 
     private static final Logger LOG = LoggerFactory.getLogger(DroolsSingleton.class);
@@ -25,13 +22,12 @@ public class DroolsSingleton {
     @Inject
     KieRuntimeBuilder runtimeBuilder;
 
-    @Inject
-    RuleOps ruleOps;
-
     @ConfigProperty(name = "ruleops.kiebase")
     String kieBase;
 
-    @Produces
+    @Inject
+    LevelTrigger levelTrigger;
+
     public StatelessKieSession createKieSession() {
         LOG.info("@Singleton construction initiated with kieBase {}...", kieBase);
         StatelessKieSession ksession = runtimeBuilder.getKieBase(kieBase).newStatelessKieSession();
@@ -44,7 +40,8 @@ public class DroolsSingleton {
      */
     @Deprecated()
     public List<Advice> evaluateAllRulesStateless(String... args) {
-        return ruleOps.evaluateAllRulesStateless(args);
+        StatelessKieSession kieSession = createKieSession();
+        return new RuleOps(levelTrigger, kieSession).evaluateAllRulesStateless(args);
     }
 
     void onStop(@Observes ShutdownEvent ev) {
