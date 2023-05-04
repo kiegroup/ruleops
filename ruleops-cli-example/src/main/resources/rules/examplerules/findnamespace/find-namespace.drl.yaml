@@ -1,0 +1,26 @@
+# Automatically generated from: find-namespace.drl
+---
+package: rules.examplerules.findnamespace
+imports:
+- java.util.Map
+- org.drools.ruleops.model.Advice
+- io.fabric8.kubernetes.api.model.ConfigMap
+- io.fabric8.kubernetes.api.model.Namespace
+rules:
+- name: Find namespace with name arg0
+  when:
+  - given: Namespace
+    as: $pod
+    having:
+    - "$name : metadata.name == arg0"
+  then: |
+    insert(new Advice("Namespace found: %s".formatted($name), ""));
+- name: Didn't find the namespace
+  when:
+  - not:
+    - exists:
+      - given: Namespace
+        having:
+        - metadata.name == arg0
+  then: |
+    insert(new Advice("Namespace not found: %s".formatted(arg0), ""));
