@@ -1,0 +1,26 @@
+# Automatically generated from: find-pod.drl
+---
+package: rules.examplerules.findpod
+imports:
+- java.util.Map
+- org.drools.ruleops.model.Advice
+- io.fabric8.kubernetes.api.model.ConfigMap
+- io.fabric8.kubernetes.api.model.Pod
+rules:
+- name: Find pod with name arg0
+  when:
+  - given: Pod
+    as: $pod
+    having:
+    - "$name : metadata.name == arg0"
+  then: |
+    insert(new Advice("Pod found: %s".formatted($name), ""));
+- name: Didn't find the pod
+  when:
+  - not:
+    - exists:
+      - given: Pod
+        having:
+        - metadata.name == arg0
+  then: |
+    insert(new Advice("Pod not found: %s".formatted(arg0), ""));
