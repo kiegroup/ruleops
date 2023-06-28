@@ -1,6 +1,4 @@
-# Automatically generated from: rules.drl
----
-package: rules.basic
+name: rules.basic
 imports:
 - java.util.Map
 - org.drools.ruleops.Utils
