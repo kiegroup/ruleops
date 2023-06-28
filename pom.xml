@@ -63,7 +63,6 @@
     <module>ruleops-basic</module>
     <module>ruleops-core</module>
     <module>ruleops-cli-example</module>
-    <module>rhoc</module>
   </modules>
 
   <dependencyManagement>
