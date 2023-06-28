@@ -19,7 +19,7 @@
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>2.16.7.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
-    <version.drools>8.39.0.Final</version.drools>
+    <version.drools>8.40.0.Final</version.drools>
     <version.awaitility>4.2.0</version.awaitility>
     <version.assertj>3.23.1</version.assertj>
     <version.quarkus.quinoa>1.1.2</version.quarkus.quinoa>
@@ -63,6 +63,7 @@
     <module>ruleops-basic</module>
     <module>ruleops-core</module>
     <module>ruleops-cli-example</module>
+    <module>rhoc</module>
   </modules>
 
   <dependencyManagement>

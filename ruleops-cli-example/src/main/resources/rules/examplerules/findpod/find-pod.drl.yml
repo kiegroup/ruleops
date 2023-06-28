@@ -1,11 +1,12 @@
-# Automatically generated from: find-pod.drl
----
-package: rules.examplerules.findpod
+name: rules.examplerules.findpod
 imports:
 - java.util.Map
 - org.drools.ruleops.model.Advice
 - io.fabric8.kubernetes.api.model.ConfigMap
 - io.fabric8.kubernetes.api.model.Pod
+globals:
+- type: String
+  id: arg0
 rules:
 - name: Find pod with name arg0
   when:
