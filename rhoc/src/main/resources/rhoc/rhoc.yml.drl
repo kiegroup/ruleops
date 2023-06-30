@@ -1,23 +1,17 @@
+// Automatically generated from: rhoc.yml
+// This file was automatically generated from a YAML representation.
 package rules.rhoc;
-
 import java.util.Map;
-
 import org.drools.ruleops.model.Advice;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.Pod;
-
-global java.lang.String arg0;
-
+global String arg0;
 rule "Find configMap in connector namespace to enable logs"
 when
-  $pod : Pod( metadata.labels["cos.bf2.org/connector.id"] == arg0,
-               $deploymentId : metadata.labels["cos.bf2.org/deployment.id"],
-                $namespace: metadata.namespace
-                )
-   $configMap: ConfigMap( metadata.name ==  "mctr-" + $deploymentId + "-configmap",  metadata.namespace == $namespace)
-
+  $pod : Pod(metadata.labels["cos.bf2.org/connector.id"] == arg0, $deploymentId : metadata.labels["cos.bf2.org/deployment.id"], $namespace: metadata.namespace)
+  $configMap : ConfigMap(metadata.name ==  "mctr-" + $deploymentId + "-configmap", metadata.namespace == $namespace)
 then
-  if(!$configMap.getData().containsKey("override.properties")) {
+if(!$configMap.getData().containsKey("override.properties")) {
         String description = """
                 Run the following command:
 

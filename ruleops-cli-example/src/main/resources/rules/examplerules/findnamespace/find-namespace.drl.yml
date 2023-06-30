@@ -1,11 +1,12 @@
-# Automatically generated from: find-namespace.drl
----
-package: rules.examplerules.findnamespace
+name: rules.examplerules.findnamespace
 imports:
 - java.util.Map
 - org.drools.ruleops.model.Advice
 - io.fabric8.kubernetes.api.model.ConfigMap
 - io.fabric8.kubernetes.api.model.Namespace
+globals:
+- type: String
+  id: arg0
 rules:
 - name: Find namespace with name arg0
   when:

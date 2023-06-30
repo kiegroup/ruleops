@@ -1,0 +1,25 @@
+// Automatically generated from: find-namespace.drl.yml
+// This file was automatically generated from a YAML representation.
+package rules.examplerules.findnamespace;
+import java.util.Map;
+import org.drools.ruleops.model.Advice;
+import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.Namespace;
+global String arg0;
+rule "Find namespace with name arg0"
+when
+  $pod : Namespace($name : metadata.name == arg0)
+then
+insert(new Advice("Namespace found: %s".formatted($name), ""));
+
+end
+rule "Didn't find the namespace"
+when
+  not(
+  exists(
+  Namespace(metadata.name == arg0)
+)
+)
+then
+insert(new Advice("Namespace not found: %s".formatted(arg0), ""));
+end

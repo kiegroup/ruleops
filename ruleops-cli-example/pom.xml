@@ -32,30 +32,29 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.1.0</version>
         <executions>
-          <execution>
-            <?m2e ignore?><!-- relies only on Maven-based build -->
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <includePluginDependencies>true</includePluginDependencies>
-              <mainClass>org.drools.ruleops.utils.drl2yaml.Generator</mainClass>
-              <arguments>
-                <argument>${project.basedir}</argument>
-              </arguments>
-              <classpathFilenameExclusions>
-                logback-classic-1.2.9.jar,slf4j-jboss-logmanager-1.2.0.Final.jar
-              </classpathFilenameExclusions>
-            </configuration>
-          </execution>
+            <execution>
+                <?m2e ignore?><!-- relies only on Maven-based build -->
+                <phase>generate-sources</phase>
+                <goals>
+                    <goal>java</goal>
+                </goals>
+                <configuration>
+                    <includePluginDependencies>true</includePluginDependencies>
+                    <mainClass>org.drools.drlonyaml.cli.App</mainClass>
+                    <arguments>
+                        <argument>batch2drl</argument>
+                        <argument>${project.basedir}/src/main/resources</argument>
+                    </arguments>
+                    <classpathFilenameExclusions>logback-classic-1.2.9.jar,slf4j-jboss-logmanager-1.2.0.Final.jar</classpathFilenameExclusions>
+                </configuration>
+            </execution>
         </executions>
         <dependencies>
-          <dependency>
-            <groupId>org.drools.ruleops</groupId>
-            <artifactId>utils-drl2yaml</artifactId>
-            <version>${project.version}</version>
-          </dependency>
+            <dependency>
+                <groupId>org.drools</groupId>
+                <artifactId>drools-drlonyaml-cli</artifactId>
+                <version>${version.drools}</version>
+            </dependency>
         </dependencies>
       </plugin>
       <plugin>
