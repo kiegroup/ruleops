@@ -1,4 +1,4 @@
-package org.drools;
+package org.drools.ruleops.basic;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
