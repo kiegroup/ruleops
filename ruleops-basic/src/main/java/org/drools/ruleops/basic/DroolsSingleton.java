@@ -1,4 +1,4 @@
-package org.drools.ruleops;
+package org.drools.ruleops.basic;
 
 import java.util.List;
 
@@ -7,6 +7,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.quarkus.runtime.ShutdownEvent;
+
+import org.drools.ruleops.LevelTrigger;
+import org.drools.ruleops.RuleOps;
+import org.drools.ruleops.TraceListener;
 import org.drools.ruleops.model.Advice;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.kie.api.runtime.KieRuntimeBuilder;

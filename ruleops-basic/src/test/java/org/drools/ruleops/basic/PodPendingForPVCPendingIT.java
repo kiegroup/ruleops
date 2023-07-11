@@ -1,10 +1,10 @@
-package org.drools.ruleops;
+package org.drools.ruleops.basic;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.drools.ruleops.TestUtils.cleanupWaitForEmptyK8s;
-import static org.drools.ruleops.TestUtils.fromServer;
-import static org.drools.ruleops.TestUtils.k8sFile;
+import static org.drools.ruleops.basic.TestUtils.cleanupWaitForEmptyK8s;
+import static org.drools.ruleops.basic.TestUtils.fromServer;
+import static org.drools.ruleops.basic.TestUtils.k8sFile;
 
 import java.util.concurrent.TimeUnit;
 

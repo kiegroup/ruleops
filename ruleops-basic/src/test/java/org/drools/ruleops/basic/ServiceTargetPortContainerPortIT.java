@@ -1,10 +1,10 @@
-package org.drools.ruleops;
+package org.drools.ruleops.basic;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.drools.ruleops.TestUtils.cleanupWaitForEmptyK8s;
-import static org.drools.ruleops.TestUtils.fromServer;
-import static org.drools.ruleops.TestUtils.k8sFile;
+import static org.drools.ruleops.basic.TestUtils.cleanupWaitForEmptyK8s;
+import static org.drools.ruleops.basic.TestUtils.fromServer;
+import static org.drools.ruleops.basic.TestUtils.k8sFile;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +21,7 @@ import io.quarkus.test.junit.QuarkusTest;
 
 // not a: @QuarkusIntegrationTest, this is not to test the result of the build, this is IT with minikube/kind
 @QuarkusTest
-public class ServiceSelectorSoundsLikeNameIT {
+public class ServiceTargetPortContainerPortIT {
     @Inject
     KubernetesClient client;
 
@@ -29,14 +29,17 @@ public class ServiceSelectorSoundsLikeNameIT {
     DroolsSingleton drools;
 
     final String HELLO_PVDF_SERVICE_YML = "hello-pvdf-service.yml";
-    final String HELLO_PVDF_SIMILARNAMEPOD_YML = "hello-pvdf-similarNamePod.yml";
+    final String HELLO_PVDF_WRONGPORTPOD_YML = "hello-pvdf-wrongPortPod.yml";
     
     @Test
     public void testRules() throws Exception {
         assertThat(drools.evaluateAllRulesStateless())
-        .contains(
-            new Advice("Service selector hint","Service hello-pvdf selector sounds-like Pod hallo-pvdf, but not an exact match: {app.kubernetes.io/name=hallo-pvdf, app.kubernetes.io/version=1.0.0-SNAPSHOT}"),
-            new Advice("Fix the Service selector","Service hello-pvdf no Pod found for selector: {app.kubernetes.io/name=hello-pvdf, app.kubernetes.io/version=1.0.0-SNAPSHOT}"));
+        .anySatisfy(a -> assertThat(a)
+            .hasFieldOrPropertyWithValue("title", "Fix the Service targetPort and the containerPort")
+            .extracting(Advice::description).asString()
+            .startsWith("Service hello-pvdf targetPort: ")
+            .endsWith("not found in any Container of related Pod: hello-pvdf")
+        );
     }
 
     @BeforeEach
@@ -50,13 +53,13 @@ public class ServiceSelectorSoundsLikeNameIT {
                 KubernetesResource r1 = fromServer(client, HELLO_PVDF_SERVICE_YML);
                 assertThat(r1).extracting("status").isNotNull();
             });
-        client.load(k8sFile(HELLO_PVDF_SIMILARNAMEPOD_YML)).createOrReplace();
+        client.load(k8sFile(HELLO_PVDF_WRONGPORTPOD_YML)).createOrReplace();
         await()
             .atMost(10, TimeUnit.SECONDS)
             .pollInterval(2, TimeUnit.SECONDS)
             .ignoreExceptions()
             .untilAsserted(() -> {
-                KubernetesResource r1 = fromServer(client, HELLO_PVDF_SIMILARNAMEPOD_YML);
+                KubernetesResource r1 = fromServer(client, HELLO_PVDF_WRONGPORTPOD_YML);
                 assertThat(r1).extracting("status.phase").asString().isEqualTo("Running");
             });
     }
@@ -64,7 +67,7 @@ public class ServiceSelectorSoundsLikeNameIT {
     @AfterEach
     public void cleanup() throws Exception {
         client.load(k8sFile(HELLO_PVDF_SERVICE_YML)).delete();
-        client.load(k8sFile(HELLO_PVDF_SIMILARNAMEPOD_YML)).delete();
+        client.load(k8sFile(HELLO_PVDF_WRONGPORTPOD_YML)).delete();
         cleanupWaitForEmptyK8s(client);
     }
 

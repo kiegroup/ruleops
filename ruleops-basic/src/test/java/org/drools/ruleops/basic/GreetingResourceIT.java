@@ -1,4 +1,4 @@
-package org.drools.ruleops;
+package org.drools.ruleops.basic;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;

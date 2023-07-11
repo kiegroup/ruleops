@@ -1,4 +1,4 @@
-package org.drools.ruleops;
+package org.drools.ruleops.basic;
 
 import java.util.List;
 
